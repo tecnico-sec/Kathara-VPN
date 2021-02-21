@@ -61,28 +61,31 @@ servidor VPN vai ser usado para terminar a VPN.
     utilizadores. Em vez de montarmos uma PKI completa, vamos usar um
     conjunto de scripts fornecidos pelo OpenVPN para gerar uma CA e
     certificados. Na máquina VPN mude para a directoria
-    */usr/share/doc/openvpn/examples/easy-rsa/2.0* e edite o ficheiro
+    */etc/openvpn/*, corra `cp -r /usr/share/easy-rsa /etc/openvpn/` 
+    e `cp vars.example /etc/openvpn/easy-rsa/vars` edit o ficheiro
     *vars*. Altere as últimas linhas. Emita os seguintes comandos para
     criar as chaves e certificado da CA.
 
 ```bash
 source ./vars
-./clean-all
-./build-ca
+./easyrsa init-pki
+./easyrsa build-ca nopass
 ```
 
 2.  Temos agora as chaves da CA. Vamos gerar chaves e certificados para
     o servidor e um cliente (não defina password).
 
 ```bash
-./build-key-server server
-./build-key client1
+./easyrsa gen-req server nopass
+./easyrsa sign-req server server
+./easyrsa gen-req client nopass
+./easyrsa sign-req client client1
 ```
 
 3.  Por fim geramos os parâmetros Diffie Hellman para uso pelo servidor.
 
 ```bash
-./build-dh
+./easyrsa gen-dh
 ```
 
 4.  No PC1 copie o ficheiro exemplo de configuração para a área de root:
@@ -95,14 +98,15 @@ cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~
     (estão na pasta keys) para a área do root do PC1: ca.crt,
     client1.crt e client1.key. Os ficheiros do cliente (principalmente
     as chaves) devem ser apagadas do servidor e mantidas secretas.
-    Sugestão: use o scp. Para tal defina a password de root no PC1.
+    Sugestão: use o comando `scp`. Para tal defina a password de 
+    root no PC1.
 
 6.  No PC1, edite o ficheiro client.conf no client e defina o endereço
     do servidor VPN (campo *remote*) e os nomes dos ficheiros com as
     chaves
 
 7.  No servidor de VPN, copie os ficheiros gerados (ca.crt dh1024.pem
-    server.key server.crt) para a pasta /etc/openvpn/
+    server.key server.crt) para a pasta */etc/openvpn/*
 
 8.  Analise o ficheiro server.conf que já está na mesma pasta.
 
@@ -137,7 +141,7 @@ openvpn client.conf
 
 Referências
 
--   Netkit, [http://wiki.netkit.org/][3]
+-   Kathara, [https://github.com/KatharaFramework/Kathara/wiki][3]
 
 -   Oskar Andreasson, Iptables Tutorial, version 1.2.2,
     [http://www.frozentux.net/iptables-tutorial/iptables-tutorial.html][4],
@@ -147,7 +151,7 @@ Referências
     [https://openvpn.net/community-resources/how-to/][5]
 
 
-  [2]: imgs/media/image2.png 
-  [3]: http://wiki.netkit.org/
+  [2]: media/image2.png 
+  [3]: https://github.com/KatharaFramework/Kathara/wiki
   [4]: http://www.frozentux.net/iptables-tutorial/iptables-tutorial.html
   [5]: [https://openvpn.net/community-resources/how-to/]
