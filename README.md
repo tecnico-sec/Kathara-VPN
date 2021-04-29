@@ -85,25 +85,31 @@ Vamos gerar chaves e certificados para o servidor e um cliente (não defina *pas
 ./easyrsa gen-dh
 ```
 
-4. No PC1 copie o ficheiro exemplo de configuração para a área de *root*:
+4. Gere uma chave simetrica para HMAC, partilhada entre o cliente e o servidor:
+```bash
+openvpn --genkey --secret ta.key
+cp ta.key /etc/openvpn
+```
+
+5. No PC1 copie o ficheiro exemplo de configuração para a área de *root*:
 
 ```bash
 cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~
 ```
 
-5. Copie os seguintes ficheiros que foram gerados no servidor VPN (estão na pasta `/etc/openvpn/easy-rsa/pki/`) para a área do *root* do PC1: `ca.crt`, `client.crt`, `client.key` e `ta.key`.
+6. Copie os seguintes ficheiros que foram gerados no servidor VPN (estão na pasta `/etc/openvpn/easy-rsa/pki/`) para a área do *root* do PC1: `ca.crt`, `client.crt`, `client.key` e `ta.key`.
 Os ficheiros do cliente (principalmente as chaves) devem ser apagadas do servidor e mantidas secretas.
 Sugestão: use o comando `scp` ou a pasta shared.
 
-6. No PC1, edite o ficheiro `client.conf` no cliente e defina o endereço do servidor VPN (campo *remote*) e os nomes dos ficheiros com as chaves
+7. No PC1, edite o ficheiro `client.conf` no cliente e defina o endereço do servidor VPN (campo *remote*) e os nomes dos ficheiros com as chaves
 
-7. No servidor de VPN, copie os ficheiros gerados (`ca.crt` `dh.pem` `server.key` `server.crt` `ta.key`) para a pasta `/etc/openvpn/`.
+8. No servidor de VPN, copie os ficheiros gerados (`ca.crt` `dh.pem` `server.key` `server.crt` `ta.key`) para a pasta `/etc/openvpn/`.
 
-8. Analise o ficheiro `server.conf` que já está na mesma pasta. 
+9. Analise o ficheiro `server.conf` que já está na mesma pasta. 
 Mude nesse ficheiro `dh1024.pem` para `dh.pem`.
 Descomente a linha `tls-auth ta.key 0` (tire o ;).
 
-9. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
+10. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
 
 ```bash
 openvpn server.conf
@@ -118,29 +124,29 @@ chmod 600 /dev/net/tun
 
 > (No futuro, para lançar normalmente use o script `/etc/init.d/openvpn`)
 
-10. Adicione a seguinte linha ao ficheiro client.conf:
+11. Adicione a seguinte linha ao ficheiro client.conf:
 ```
 comp-lzo
 ```
 
 
-11. Lance o cliente no PC1, em modo *debug*:
+12. Lance o cliente no PC1, em modo *debug*:
 
 ```bash
 openvpn client.conf
 ```
 
-12. Observe as mensagens no cliente e servidor.
+13. Observe as mensagens no cliente e servidor.
 Verifique que já estão ligados.
 
-13. Verifique as rotas presentes no router 1.
+14. Verifique as rotas presentes no router 1.
 Repare que existe já uma rota para a rede `200.200.200.0/25` através do servidor de VPN.
 Esta é a rede com os IPs atribuídos aos clientes de VPN.
 
 15. Coloque o openvpn em background com `Ctrl + z` seguido do comando `bg`.
 Tente agora aceder do PC1 à rede que está bloqueada: `192.168.0.0/24`.
 
-15. Faça `traceroute` do PC1 para o servidor 4.
+16. Faça `traceroute` do PC1 para o servidor 4.
 O router 2 está presente no caminho?
 Porquê?
 
