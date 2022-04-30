@@ -94,7 +94,7 @@ Vamos gerar chaves e certificados para o servidor e um cliente (não defina *pas
 ./easyrsa gen-dh
 ```
 
-4. Gere uma chave simetrica para HMAC, partilhada entre o cliente e o servidor:
+4. Gere a chave simétrica que será partilhada entre o servidor e o(s) cliente(s) de modo a proteger a comunicação de controle entre eles (TLS Control Channel Security):
 ```bash
 openvpn --genkey --secret ta.key
 cp ta.key /etc/openvpn
@@ -149,7 +149,7 @@ openvpn client.conf
 13. Observe as mensagens no cliente e servidor.
 Verifique que já estão ligados.
 
-14. Verifique as rotas presentes no router 1.
+14. Verifique as rotas presentes no router 1 executando `ip route`.
 Repare que existe já uma rota para a rede `200.200.200.0/25` através do servidor de VPN.
 Esta é a rede com os IPs atribuídos aos clientes de VPN.
 
