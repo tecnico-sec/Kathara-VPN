@@ -44,7 +44,7 @@ Porque é que continuamos a conseguir aceder por ssh ao router 1 usando o IP `20
 ## Exercício 2 -- Criação de uma VPN
 
 Uma *Virtual Private Network* (VPN) permite o acesso a partir do exterior a uma rede interna de uma organização.
-Adicionalmente permite proteger criptográficamente o tráfego que circula nas redes públicas.
+Adicionalmente permite proteger criptograficamente o tráfego que circula nas redes públicas.
 Neste exercício vamos configurar o PC1 para aceder à rede interna (redes ligadas ao router 1), apesar do router 1 não permitir acessos do exterior.
 O servidor VPN vai ser usado para terminar a VPN.
 
