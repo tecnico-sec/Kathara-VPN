@@ -50,7 +50,7 @@ O servidor VPN vai ser usado para terminar a VPN.
 
 1. O OpenVPN usa chaves assimétricas e certificados para autenticar os utilizadores.
 Em vez de montarmos uma PKI completa, vamos usar um conjunto de *scripts* fornecidos pelo OpenVPN para gerar uma CA e certificados.
-Na máquina VPN mude para a directoria `/etc/openvpn/` e corra 
+Na máquina VPN mude para a directoria `/etc/openvpn/` e corra:
 
 ```bash
 cp -r /usr/share/easy-rsa /etc/openvpn/
