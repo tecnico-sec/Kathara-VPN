@@ -25,9 +25,7 @@ A quais não é possível?
 2. Se controlasse o router 2 (mas não o router 1), conseguia fazer com o que PC1 tivesse acesso a todas as redes?
 Se sim, faça-o.
 
-3. Coloque regras de *firewall* no router 1 que:
-* impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os utilizados)
-* mas permitindo a comunicação entre as redes `200.200.200.128/25` e `192.168.0.0/24`
+3. Coloque regras de *firewall* no router 1 que impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os mostrados no diagrama).
 
 4. No PC1, use o `nmap` para detetar as máquinas presentes na rede `200.200.200.128/25`.
 Quantas máquinas foram encontradas e quais os serviços? (NB: o nmap vai percorrer cerca de 128 endereços, logo demora algum tempo)
@@ -121,11 +119,20 @@ O ficheiro `client.key` contém a chave privada do cliente, logo tem de ser apag
 
 8. No servidor de VPN, copie os ficheiros gerados (`ca.crt` `dh.pem` `server.key` `server.crt` `ta.key`) para a pasta `/etc/openvpn/`.
 
-9. Analise o ficheiro `server.conf` que já está na mesma pasta. 
-Mude nesse ficheiro `dh1024.pem` para `dh.pem`.
-Descomente a linha `tls-auth ta.key 0` (tire o ;).
+9. Analise o ficheiro `server.conf` que já está na mesma pasta. Altere o seguinte:
+* Mude `dh1024.pem` para `dh.pem`.
+* Descomente a linha `tls-auth ta.key 0` (tire o ;).
 
-10. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
+10. Repare que o mesmo ficheiro contém a linha 
+
+```bash
+server 200.200.200.0 255.255.255.128
+```
+
+Esta linha indica que a subrede da VPN é a `200.200.200.0/25`, ou seja, que um computador externo (no nosso caso, o PC1) vai aparecer para a rede interna com um endereço IP dessa subrede.
+Muito provavelmente, na sua configuração a comunicação entre essa subrede e a subrede 200.200.200.128/25 está barrada na firewall do router1. Remova essa restrição.
+
+11. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
 
 ```bash
 openvpn server.conf
@@ -140,29 +147,25 @@ chmod 600 /dev/net/tun
 
 > (No futuro, para lançar normalmente use o script `/etc/init.d/openvpn`)
 
-11. Descomente a seguinte linha ao ficheiro `client.conf` para activar a compressão das comunicações:
-```
-comp-lzo
-```
+12. Descomente a seguinte linha ao ficheiro `client.conf` para activar a compressão das comunicações: `comp-lzo`.
 
-
-12. Lance o cliente no PC1, em modo *debug*:
+13. Lance o cliente no PC1, em modo *debug*:
 
 ```bash
 openvpn client.conf
 ```
 
-13. Observe as mensagens no cliente e servidor.
+14. Observe as mensagens no cliente e servidor.
 Verifique que já estão ligados.
 
-14. Verifique as rotas presentes no router 1 executando `ip route`.
+15. Verifique as rotas presentes no router 1 executando `ip route`.
 Repare que existe já uma rota para a rede `200.200.200.0/25` através do servidor de VPN.
 Esta é a rede com os IPs atribuídos aos clientes de VPN.
 
-15. Coloque o openvpn em background com `Ctrl + z` seguido do comando `bg`.
+16. Coloque o openvpn em background com `Ctrl + z` seguido do comando `bg`.
 Tente agora aceder do PC1 à rede que está bloqueada: `192.168.0.0/24`.
 
-16. Faça `traceroute` do PC1 para o servidor 4.
+17. Faça `traceroute` do PC1 para o servidor 4.
 O router 2 está presente no caminho?
 Porquê?
 
