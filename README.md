@@ -104,9 +104,10 @@ cp ta.key /etc/openvpn
 cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~
 ```
 
-6. Copie os seguintes ficheiros que foram gerados no servidor VPN (estão na pasta `/etc/openvpn/easy-rsa/pki/`) para a área do *root* do PC1: `ca.crt`, `client.crt`, `client.key` e `ta.key`.
-Os ficheiros do cliente (principalmente as chaves) devem ser apagadas do servidor e mantidas secretas.
+6. Copie os seguintes ficheiros que foram gerados no servidor VPN (que estão na pasta `/etc/openvpn/easy-rsa/pki/` e suas subpastas) para a área do *root* do PC1: `ca.crt`, `client.crt`, `client.key` e `ta.key`.
 Sugestão: use o comando `scp` ou a pasta shared.
+O ficheiro `client.key` contém a chave privada do cliente, logo tem de ser apagado do servidor. Esse ficheiro e o que contém a chave privada do servidor (`server.key`) têm de ser mantidos secretos.
+
 
 7. No PC1, edite o ficheiro `client.conf` no cliente e defina o endereço do servidor VPN (campo *remote*) e os nomes dos ficheiros com as chaves
 
