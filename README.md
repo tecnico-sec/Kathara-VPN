@@ -134,7 +134,7 @@ chmod 600 /dev/net/tun
 
 > (No futuro, para lançar normalmente use o script `/etc/init.d/openvpn`)
 
-11. Adicione a seguinte linha ao ficheiro client.conf:
+11. Adicione a seguinte linha ao ficheiro `client.conf` para activar a compressão das comunicações:
 ```
 comp-lzo
 ```
