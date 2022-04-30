@@ -77,7 +77,7 @@ cd easy-rsa
 ```
 
 2. Temos agora as chaves da CA.
-Vamos gerar chaves e certificados para o servidor e um cliente (não defina *password*).
+Vamos gerar chaves e certificados para o servidor e um cliente (não defina *password* e carregue em *enter* em resposta a todas as questões que os comandos colocam).
 
 ```bash
 ./easyrsa gen-req server nopass
