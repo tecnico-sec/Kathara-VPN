@@ -25,7 +25,9 @@ A quais não é possível?
 2. Se controlasse o router 2 (mas não o router 1), conseguia fazer com o que PC1 tivesse acesso a todas as redes?
 Se sim, faça-o.
 
-3. Coloque regras de *firewall* no router 1 que impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os utilizados).
+3. Coloque regras de *firewall* no router 1 que:
+* impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os utilizados)
+* mas permitindo a comunicação entre as redes `200.200.200.128/25` e `192.168.0.0/24`
 
 4. No PC1, use o `nmap` para detetar as máquinas presentes na rede `200.200.200.128/25`.
 Quantas máquinas foram encontradas e quais os serviços? (NB: o nmap vai percorrer cerca de 128 endereços, logo demora algum tempo)
@@ -70,11 +72,15 @@ set_var KEY_EMAIL "admin@example.com"
 set_var KEY_OU "OpenVPN"
 ```
 
-Emita os seguintes comandos para criar as chaves e certificado da CA.
+Emita o seguinte comando na directoria `easy-rsa` para inicializar a PKI: 
 
 ```bash
-cd easy-rsa
 ./easyrsa init-pki
+```
+
+Emita o seguinte comando para inicializar a CA, criando as suas chaves e certificado:
+
+```bash
 ./easyrsa build-ca nopass
 ```
 
