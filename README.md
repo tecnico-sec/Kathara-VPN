@@ -28,7 +28,7 @@ Se sim, faça-o.
 3. Coloque regras de *firewall* no router 1 que impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os utilizados).
 
 4. No PC1, use o `nmap` para detetar as máquinas presentes na rede `200.200.200.128/25`.
-Quantas máquinas foram encontradas e quais os serviços?
+Quantas máquinas foram encontradas e quais os serviços? (NB: o nmap vai percorrer cerca de 128 endereços, logo demora algum tempo)
 
 ```bash
 nmap 200.200.200.128/25
