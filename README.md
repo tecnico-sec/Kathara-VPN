@@ -123,14 +123,14 @@ O ficheiro `client.key` contém a chave privada do cliente, logo tem de ser apag
 * Mude `dh1024.pem` para `dh.pem`.
 * Descomente a linha `tls-auth ta.key 0` (tire o ;).
 
-10. Repare que o mesmo ficheiro contém a linha 
+10. Repare que o mesmo ficheiro contém a linha:
 
 ```bash
 server 200.200.200.0 255.255.255.128
 ```
 
 Esta linha indica que a subrede da VPN é a `200.200.200.0/25`, ou seja, que um computador externo (no nosso caso, o PC1) vai aparecer para a rede interna com um endereço IP dessa subrede.
-Muito provavelmente, na sua configuração a comunicação entre essa subrede e a subrede 200.200.200.128/25 está barrada na firewall do router1. Remova essa restrição.
+Muito provavelmente, na sua configuração a comunicação entre essa subrede e a subrede `200.200.200.128/25` (que é parecida mas diferente) está barrada na firewall do router1. Remova essa restrição, reconfigurando a firewall.
 
 11. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
 
