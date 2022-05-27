@@ -138,7 +138,7 @@ Muito provavelmente, na sua configuração a comunicação entre essa subrede e 
 openvpn server.conf
 ```
 
-Caso o openvpn falhe, poderá ser necessario correr o seguinte comando antes:
+Caso o openvpn falhe, poderá ser necessário correr o seguinte comando antes:
 ```
 mkdir -p /dev/net
 mknod /dev/net/tun c 10 200
