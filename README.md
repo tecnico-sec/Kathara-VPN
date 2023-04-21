@@ -186,4 +186,4 @@ Referências:
   [2]: media/image2.png 
   [3]: https://github.com/KatharaFramework/Kathara/wiki
   [4]: http://www.frozentux.net/iptables-tutorial/iptables-tutorial.html
-  [5]: [https://openvpn.net/community-resources/how-to/]
+  [5]: https://openvpn.net/community-resources/how-to/
