@@ -6,7 +6,7 @@ Instituto Superior Técnico, Universidade de Lisboa
 
 ## Objectivo
 
-O objectivo do guia consiste em aprender como funciona e como pode ser implementada uma VPN usando o software OpenVPN.
+O objectivo do guia consiste em aprender como funciona e como pode ser implementada uma VPN usando o software OpenVPN com o protocolo TLS (Transport Layer Security).
 Neste guia iremos ainda revisitar as ferramentas *nmap* e *iptables* (*firewall*).
 
 ---
