@@ -50,6 +50,8 @@ Neste exercício vamos configurar o PC1 para aceder à rede interna (redes ligad
 * **Servidor OpenVPN:** o servidor designado simplesmente *VPN* (lado esquerdo, em baixo) vai ser o servidor OpenVPN, ou seja, o computador ao qual os computadores que queiram usar a VPN se terão de ligar.
 * **Cliente OpenVPN:** o PC1 vai ser o cliente OpenVPN.
 
+![image2](https://github.com/tecnico-sec/Kathara-VPN/assets/10196133/79146c8d-32f4-4bab-81f1-5b5b9b4c5ae0)
+
 1. O OpenVPN usa chaves assimétricas e certificados para autenticar os utilizadores.
 Em vez de montarmos uma PKI completa, vamos usar um conjunto de *scripts* fornecidos pelo OpenVPN para gerar uma CA e certificados.
 Na máquina VPN mude para a directoria `/etc/openvpn/` e corra:
