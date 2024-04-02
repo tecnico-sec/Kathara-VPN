@@ -6,12 +6,12 @@ Instituto Superior Técnico, Universidade de Lisboa
 
 ## Objectivo
 
-O objectivo do guia consiste em aprender como funciona e como pode ser implementada uma VPN usando o software OpenVPN com o protocolo TLS (Transport Layer Security).
+O objectivo do guia consiste em aprender como funciona e como pode ser implementada uma VPN usando o software OpenVPN, que usa o protocolo TLS (Transport Layer Security) para proteger as comunicações.
 Neste guia iremos ainda revisitar as ferramentas *nmap* e *iptables* (*firewall*).
 
 ---
 
-## Exercício 1 -- Restrição de acesso à rede
+## Exercício 1 - Restrição de acesso à rede
 
 Obtenha o laboratório *Kathará* que servirá de base aos exercícios a desenvolver durante a aula.
 A topologia é a apresentada na figura abaixo.
@@ -41,9 +41,9 @@ Porque é que continuamos a conseguir aceder por ssh ao router 1 usando o IP `20
 
 ---
 
-## Exercício 2 -- Criação de uma VPN
+## Exercício 2 - Criação de uma VPN
 
-Uma *Virtual Private Network* (VPN) permite o acesso a partir do exterior a uma rede interna de uma organização.
+Uma *Virtual Private Network* (VPN), ou rede privada virtual, permite o acesso a partir do exterior a uma rede interna de uma organização.
 Adicionalmente permite proteger criptograficamente o tráfego que circula nas redes públicas.
 
 Neste exercício vamos configurar o PC1 para aceder à rede interna (redes ligadas ao router 1), apesar do router 1 não permitir acessos do exterior. Portanto, o PC1 vai usar uma VPN para fazer esse acesso. Em concreto, vamos ter um cliente e um servidor OpenVPN:
@@ -52,9 +52,12 @@ Neste exercício vamos configurar o PC1 para aceder à rede interna (redes ligad
 
 ![image2](https://github.com/tecnico-sec/Kathara-VPN/assets/10196133/79146c8d-32f4-4bab-81f1-5b5b9b4c5ae0)
 
-1. O OpenVPN usa chaves assimétricas e certificados para autenticar os utilizadores.
-Em vez de montarmos uma PKI completa, vamos usar um conjunto de *scripts* fornecidos pelo OpenVPN para gerar uma CA e certificados.
-Na máquina VPN mude para a directoria `/etc/openvpn/` e corra:
+1. O OpenVPN usa chaves assimétricas e certificados para autenticar os utilizadores, logo precisa de uma *Public Key Infrastructure* (PKI) para fazer a criação, distribuição e revogação de certificados.
+No entanto, para simplificar, não vamos usar uma PKI completa mas apenas uma PKI que inclui apenas uma *Certification Authority* (CA) muito simples. Aliás, a CA devia estar num ambiente com elevado grau de segurança, p.ex., num computador desligado da Internet, mas não vamos considerar esse aspecto.
+
+O próprio OpenVPN já fornece um conjunto de *scripts* para gerar a CA e certificados: `easy-rsa`.
+ 
+Na máquina VPN mude para a directoria `/etc/openvpn/` e execute:
 
 ```bash
 cp -r /usr/share/easy-rsa /etc/openvpn/
@@ -78,14 +81,14 @@ Emita o seguinte comando na directoria `easy-rsa` para inicializar a PKI:
 ./easyrsa init-pki
 ```
 
-Emita o seguinte comando para inicializar a CA, criando as suas chaves e certificado:
+Emita o seguinte comando para inicializar a CA, criando o seu par de chaves e um certificado com a sua chave pública:
 
 ```bash
 ./easyrsa build-ca nopass
 ```
 
 2. Temos agora as chaves da CA.
-Vamos gerar chaves e certificados para o servidor e um cliente (não defina *password*).
+Vamos gerar chaves e certificados para o servidor e para o cliente continuando a usar os *scripts* `easy-rsa` (não defina *password*).
 
 ```bash
 ./easyrsa gen-req server nopass
@@ -94,13 +97,14 @@ Vamos gerar chaves e certificados para o servidor e um cliente (não defina *pas
 ./easyrsa sign-req client client
 ```
 
-3. Por fim geramos os parâmetros *Diffie-Hellman* para uso pelo servidor.
+3. Vamos gerar parâmetros *Diffie-Hellman* para o servidor usar quando clientes se tentarem ligar a ele:
 
 ```bash
 ./easyrsa gen-dh
 ```
 
-4. Gere a chave simétrica que será partilhada entre o servidor e o(s) cliente(s) de modo a proteger a comunicação de controle entre eles (TLS Control Channel Security):
+4. O OpenVPN fornece um mecanismo chamado *tls-aut* que permite verificar a integridade das mensagens trocadas durante o *handshake* do TLS. Em geral não é possível garantir a integridade das mensagens trocadas *durante o handshake* do TLS, só *no fim do handshake*, pois até ao fim do *handshake* não existem chaves partilhadas que permitam verificar a integridade das mensagens. No TLS standard é isso que acontece: no fim do *handshake* cliente e servidor enviam um ao outro um MAC das mensagens trocadas e verificam se estão de acordo com o que esperavam.
+O mecanismo *tls-aut* é um "truque" do OpenVPN que não funciona no caso geral mas por vezes pode funcionar: ter à partida uma chave secreta (simétrica) partilhada entre cliente e servidor para verificar a integridade das mensagens trocadas durante o *handshake* do TLS através da colocação de um MAC em cada mensagem. Este mecanismo serve para proteger de ataques de negação de serviço ou de tentativas de injecção de pacotes (p.ex. para tentar fazer buffer overflow). Gere essa chave que será partilhada entre o servidor e o(s) cliente(s):
 ```bash
 openvpn --genkey --secret ta.key
 cp ta.key /etc/openvpn
@@ -112,14 +116,20 @@ cp ta.key /etc/openvpn
 cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~
 ```
 
-6. Copie os seguintes ficheiros que foram gerados no servidor VPN (que estão na pasta `/etc/openvpn/easy-rsa/` e suas subpastas) para a área do *root* do PC1: `ca.crt`, `client.crt`, `client.key` e `ta.key`.
+6. Copie os seguintes ficheiros que foram gerados no servidor VPN (que estão na pasta `/etc/openvpn/easy-rsa/` e suas subpastas) para a área do *root* do PC1:
+* `ca.crt` - certificado da CA
+* `client.crt` - certificado do cliente
+* `client.key` - chaves do cliente
+* `ta.key` - a chave do mecanismo *tls-aut*
+
 Sugestão: use o comando `scp` ou a pasta `shared`.
-O ficheiro `client.key` contém a chave privada do cliente, logo tem de ser apagado do servidor. Esse ficheiro e o que contém a chave privada do servidor (`server.key`) têm de ser mantidos secretos.
+
+O ficheiro `client.key` contém a chave privada do cliente, logo tem de ser apagado do servidor. Esse ficheiro e o que contém a chave privada do servidor (`server.key`) têm de ser mantidos secretos. Escusado será dizer que seria muito errado copiar o ficheiro `server.key` para o cliente!
 
 
 7. No PC1, edite o ficheiro `client.conf` no cliente e defina o endereço do servidor VPN (campo *remote*) e os nomes dos ficheiros com as chaves
 
-8. No servidor de VPN, copie os ficheiros gerados (`ca.crt` `dh.pem` `server.key` `server.crt` `ta.key`) para a pasta `/etc/openvpn/`.
+8. No servidor de VPN, copie os ficheiros `ca.crt`, `dh.pem`, `server.key`, `server.crt` e `ta.key` para a pasta `/etc/openvpn/`.
 
 9. Analise o ficheiro `server.conf` que já está na mesma pasta. Altere o seguinte:
 * Mude `dh1024.pem` para `dh.pem`.
