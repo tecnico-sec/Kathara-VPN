@@ -116,6 +116,9 @@ cp ta.key /etc/openvpn
 cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf ~
 ```
 
+Repare que tem de dar a esse ficheiro o mesmo nome que usou em cima no comando `./easyrsa gen-req`, seguido da extensão `.conf`. Neste caso por acaso o nome é o mesmo - `cliente` - mas podia ser diferente.
+
+
 6. Copie os seguintes ficheiros que foram gerados no servidor VPN (que estão na pasta `/etc/openvpn/easy-rsa/` e suas subpastas) para a área do *root* do PC1:
 * `ca.crt` - certificado da CA
 * `client.crt` - certificado do cliente
