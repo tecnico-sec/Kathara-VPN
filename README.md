@@ -177,12 +177,21 @@ Verifique que já estão ligados.
 Repare que existe já uma rota para a rede `200.200.200.0/25` através do servidor de VPN.
 Esta é a rede com os IPs atribuídos aos clientes de VPN.
 
-16. Coloque o openvpn em background com `Ctrl + z` seguido do comando `bg`.
-Tente agora aceder do PC1 à rede que está bloqueada: `192.168.0.0/24`.
+16. Coloque o cliente e o servidor OpenVPN em background com `Ctrl + z` seguido do comando `bg`.
 
-17. Faça `traceroute` do PC1 para o servidor 4.
+---
+
+## Exercício 3 - Teste da VPN
+
+1. Tente agora aceder do PC1 à rede que está bloqueada (`192.168.0.0/24`). É possível? Porquê?
+
+2. Faça `traceroute` do PC1 para o servidor 4.
 O router 2 está presente no caminho?
 Porquê?
+
+3. Execute no Router 2 o comando `tcpdump` para observar informação sobre os pacotes trocados. Faça novamente `traceroute` do PC1 para o servidor 4 e tome nota dos endereços IP de origem e de destino enviados pelo cliente e servidor OpenVPN. O que conclui daí sobre aquilo que uma VPN protege de quem está na Internet?
+
+4. Faça agora `traceroute` do servidor 4 para o PC1 e tome também nota dos endereços IP de origem e de destino enviados pelo cliente e servidor OpenVPN. Novemente, o que conclui?
 
 ---
 
