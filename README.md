@@ -19,22 +19,22 @@ O lado esquerdo da rede (equipamentos ligados ao router 1) representa a rede de 
 
 ![][2]
 
-1. Use o traceroute para verificar a que redes da organização consegue chegar a partir do PC1.
+1. Use o comando `traceroute` para verificar a que redes da organização consegue chegar a partir do PC1.
 A quais não é possível?
 
-2. Se controlasse o router 2 (mas não o router 1), conseguia fazer com o que PC1 tivesse acesso a todas as redes?
-Se sim, faça-o.
+2. Controlando o router 2 (mas não o router 1) é possível fazer com o que PC1 tenha acesso a todas as redes.
+Faça essa alteração.
 
-3. Coloque regras de *firewall* no router 1 que impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os mostrados no diagrama).
+3. Usando o comando `iptables` coloque regras de *firewall* no router 1 que impeçam o acesso de e à rede `192.168.0.0/24` a partir da Internet (que tem mais endereços do que os mostrados no diagrama).
 
-4. No PC1, use o `nmap` para detetar as máquinas presentes na rede `200.200.200.128/25`.
-Quantas máquinas foram encontradas e quais os serviços? (NB: o nmap vai percorrer cerca de 128 endereços, logo demora algum tempo)
+4. No PC1, use o comando `nmap` para detetar as máquinas presentes na rede `200.200.200.128/25`.
+Quantas máquinas foram encontradas e quais os serviços? (NB: o `nmap` vai percorrer cerca de 128 endereços, logo demora algum tempo)
 
 ```bash
 nmap 200.200.200.128/25
 ```
 
-5. Crie regras de *firewall* no router 1 que impeçam o acesso aos protocolos HTTP (80) e SSH (22) a partir da Internet, mas que permitam o acesso de dentro para fora (apenas para a rede `200.200.200.128/25` pois a `192.168.0.0/24` já se encontra bloqueada de e para a Internet).
+5. Crie regras de *firewall* (`iptables`) no router 1 que impeçam o acesso aos protocolos HTTP (80) e SSH (22) a partir da Internet, mas que permitam o acesso de dentro para fora (apenas para a rede `200.200.200.128/25` pois a `192.168.0.0/24` já se encontra bloqueada de e para a Internet).
 
 6. Repita o comando `nmap` a partir do PC1 e do servidor 3 e verifique as diferenças.
 Porque é que continuamos a conseguir aceder por ssh ao router 1 usando o IP `200.200.200.254`?
@@ -183,13 +183,12 @@ Esta é a rede com os IPs atribuídos aos clientes de VPN.
 
 ## Exercício 3 - Teste da VPN
 
-1. Tente agora aceder do PC1 à rede que está bloqueada (`192.168.0.0/24`). É possível? Porquê?
+1. Tente agora aceder do PC1 à rede que está bloqueada (`192.168.0.0/24`) usando o comando `ping`. É possível? Porquê?
 
 2. Faça `traceroute` do PC1 para o servidor 4.
-O router 2 está presente no caminho?
-Porquê?
+O router 2 está presente no caminho? Porquê?
 
-3. Execute no Router 2 o comando `tcpdump` para observar informação sobre os pacotes trocados. Faça novamente `traceroute` do PC1 para o servidor 4 e tome nota dos endereços IP de origem e de destino enviados pelo cliente e servidor OpenVPN. O que conclui daí sobre aquilo que uma VPN protege de quem está na Internet?
+3. Execute no router 2 o comando `tcpdump` para observar informação sobre os pacotes trocados. Faça novamente `traceroute` do PC1 para o servidor 4 e tome nota dos endereços IP de origem e de destino enviados pelo cliente e servidor OpenVPN. O que conclui daí sobre aquilo que uma VPN protege de quem está na Internet?
 
 4. Faça agora `traceroute` do servidor 4 para o PC1 e tome também nota dos endereços IP de origem e de destino enviados pelo cliente e servidor OpenVPN. Novemente, o que conclui?
 
