@@ -103,9 +103,10 @@ Vamos gerar chaves e certificados para o servidor e para o cliente continuando a
 ./easyrsa gen-dh
 ```
 
-4. O OpenVPN fornece um conjunto de mechanismos de *security hardening*. Um mecanismo desses mecanismos é chamado *tls-auth* e permite verificar a integridade das mensagens trocadas durante o *handshake* do TLS. Convém notar que o TLS verifica a integridade dessas mensagens, mas faz essa verificação depois do *handshake*, não durante o *handshake*.  
-No standard, depois do *handshake*, o cliente e servidor enviam um ao outro um MAC das mensagens trocadas e verificam se estão de acordo com o que esperavam.  
-O mecanismo *tls-auth* é um "truque" do OpenVPN que não funciona no caso geral: ter à partida uma chave secreta (simétrica) partilhada entre cliente e servidor para verificar a integridade das mensagens trocadas durante o *handshake* do TLS através da colocação de um MAC em cada uma das mensagem. Este mecanismo serve para proteger de ataques de negação de serviço ou de tentativas de injecção de pacotes (p.ex. para tentar fazer buffer overflow). Gere essa chave que será partilhada entre o servidor e o(s) cliente(s):
+4. O OpenVPN fornece um conjunto de mechanismos de *security hardening*. Um desses mecanismos é chamado *tls-auth* e permite verificar a integridade das mensagens trocadas durante o *handshake* do TLS. Convém notar que o TLS verifica a integridade dessas mensagens, mas faz essa verificação depois do *handshake*, não durante o *handshake*. No standard, depois do *handshake*, o cliente e servidor enviam um ao outro um MAC das mensagens trocadas e verificam se estão de acordo com o que esperavam.  
+O mecanismo *tls-auth* usa um "truque" do OpenVPN que não funciona no caso geral: ter à partida uma chave secreta (simétrica) partilhada entre cliente e servidor para verificar a integridade das mensagens trocadas durante o *handshake* do TLS através da colocação de um MAC em cada uma das mensagem. Este mecanismo serve para proteger de ataques de negação de serviço ou de tentativas de injecção de pacotes (p.ex. para tentar fazer buffer overflow). 
+
+Gere a chave secreta que será partilhada entre o servidor e o(s) cliente(s) executando:
 ```bash
 openvpn --genkey --secret ta.key
 cp ta.key /etc/openvpn
