@@ -53,9 +53,9 @@ Neste exercício vamos configurar o PC1 para aceder à rede interna (redes ligad
 ![image2](https://github.com/tecnico-sec/Kathara-VPN/assets/10196133/79146c8d-32f4-4bab-81f1-5b5b9b4c5ae0)
 
 1. O OpenVPN usa chaves assimétricas e certificados para autenticar os utilizadores, logo precisa de uma *Public Key Infrastructure* (PKI) para fazer a criação, distribuição e revogação de certificados.
-No entanto, para simplificar, não vamos usar uma PKI completa mas apenas uma PKI que inclui apenas uma *Certification Authority* (CA) muito simples. Aliás, a CA devia estar num ambiente com elevado grau de segurança, p.ex., num computador desligado da Internet, mas não vamos considerar esse aspecto.
+Para o efeito vamos usar uma PKI mínima, que inclui apenas uma *Certification Authority* (CA) muito simples. Aliás, a CA devia estar num ambiente com elevado grau de segurança, p.ex., num computador desligado da Internet, mas não vamos considerar esse aspecto.
 
-O próprio OpenVPN já fornece um conjunto de *scripts* para gerar a CA e certificados: `easy-rsa`.
+O OpenVPN fornece um conjunto de *scripts* para gerar a CA e certificados: `easy-rsa`.
  
 Na máquina VPN mude para a directoria `/etc/openvpn/` e execute:
 
@@ -103,8 +103,9 @@ Vamos gerar chaves e certificados para o servidor e para o cliente continuando a
 ./easyrsa gen-dh
 ```
 
-4. O OpenVPN fornece um mecanismo chamado *tls-aut* que permite verificar a integridade das mensagens trocadas durante o *handshake* do TLS. Em geral não é possível garantir a integridade das mensagens trocadas *durante o handshake* do TLS, só *no fim do handshake*, pois até ao fim do *handshake* não existem chaves partilhadas que permitam verificar a integridade das mensagens. No TLS standard é isso que acontece: no fim do *handshake* cliente e servidor enviam um ao outro um MAC das mensagens trocadas e verificam se estão de acordo com o que esperavam.
-O mecanismo *tls-aut* é um "truque" do OpenVPN que não funciona no caso geral mas por vezes pode funcionar: ter à partida uma chave secreta (simétrica) partilhada entre cliente e servidor para verificar a integridade das mensagens trocadas durante o *handshake* do TLS através da colocação de um MAC em cada mensagem. Este mecanismo serve para proteger de ataques de negação de serviço ou de tentativas de injecção de pacotes (p.ex. para tentar fazer buffer overflow). Gere essa chave que será partilhada entre o servidor e o(s) cliente(s):
+4. O OpenVPN fornece um conjunto de mechanismos de *security hardening*. Um mecanismo desses mecanismos é chamado *tls-auth* e permite verificar a integridade das mensagens trocadas durante o *handshake* do TLS. Convém notar que o TLS verifica a integridade dessas mensagens, mas faz essa verificação depois do *handshake*, não durante o *handshake*.  
+No standard, depois do *handshake*, o cliente e servidor enviam um ao outro um MAC das mensagens trocadas e verificam se estão de acordo com o que esperavam.  
+O mecanismo *tls-auth* é um "truque" do OpenVPN que não funciona no caso geral: ter à partida uma chave secreta (simétrica) partilhada entre cliente e servidor para verificar a integridade das mensagens trocadas durante o *handshake* do TLS através da colocação de um MAC em cada uma das mensagem. Este mecanismo serve para proteger de ataques de negação de serviço ou de tentativas de injecção de pacotes (p.ex. para tentar fazer buffer overflow). Gere essa chave que será partilhada entre o servidor e o(s) cliente(s):
 ```bash
 openvpn --genkey --secret ta.key
 cp ta.key /etc/openvpn
@@ -123,7 +124,7 @@ Repare que tem de dar a esse ficheiro o mesmo nome que usou em cima no comando `
 * `ca.crt` - certificado da CA
 * `client.crt` - certificado do cliente
 * `client.key` - chaves do cliente
-* `ta.key` - a chave do mecanismo *tls-aut*
+* `ta.key` - a chave do mecanismo *tls-auth*
 
 Sugestão: use o comando `scp` ou a pasta `shared`.
 
@@ -147,7 +148,7 @@ server 200.200.200.0 255.255.255.128
 Esta linha indica que a subrede da VPN é a `200.200.200.0/25`, ou seja, que um computador externo (no nosso caso, o PC1) vai aparecer para a rede interna com um endereço IP dessa subrede.
 Muito provavelmente, na sua configuração a comunicação entre essa subrede e a subrede `200.200.200.128/25` (que é parecida mas diferente) está barrada na firewall do router1. Remova essa restrição, reconfigurando a firewall.
 
-11. Lance o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
+11. Execute o servidor de VPN no servidor, em modo *debug*, a partir da pasta `/etc/openvpn`:
 
 ```bash
 openvpn server.conf
@@ -164,7 +165,7 @@ chmod 600 /dev/net/tun
 
 12. Descomente a seguinte linha ao ficheiro `client.conf` para activar a compressão das comunicações: `comp-lzo`.
 
-13. Lance o cliente no PC1, em modo *debug*:
+13. Execute o cliente no PC1, em modo *debug*:
 
 ```bash
 openvpn client.conf
